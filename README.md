@@ -1,2 +1,3 @@
-# resolve-client
-Performs Resolve attendace marking for given IDs
+# Resolve Client
+
+Performs Resolve attendance marking for given IDs
