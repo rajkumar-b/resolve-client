@@ -1,14 +1,11 @@
-import logging
-import os
 import random
 
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.wait import WebDriverWait as WDW
 from selenium.webdriver.support import expected_conditions as EC
 from enum import Enum
-from configs import user_data, XPath
+from configs import logger, driver, wait, XPath
+from user_details import user_data
 
 
 class ATT_STATE(Enum):
@@ -17,40 +14,12 @@ class ATT_STATE(Enum):
     WORKPLACE = " Work Place "
 
 
-logger = logging.getLogger("lambda.resolve.client")
-logger.setLevel(logging.INFO)
-
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument('--window-size=1280x1696')
-chrome_options.add_argument("--start-maximized")
-chrome_options.add_argument('--user-data-dir=/tmp/user-data')
-chrome_options.add_argument('--hide-scrollbars')
-chrome_options.add_argument('--enable-logging')
-chrome_options.add_argument('--log-level=0')
-chrome_options.add_argument('--v=99')
-chrome_options.add_argument('--single-process')
-chrome_options.add_argument('--data-path=/tmp/data-path')
-chrome_options.add_argument('--ignore-certificate-errors')
-chrome_options.add_argument('--homedir=/tmp')
-chrome_options.add_argument('--disk-cache-dir=/tmp/cache-dir')
-chrome_options.add_argument(
-    'user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36')
-chrome_options.binary_location = os.getcwd() + "/bin/headless-chromium"
-chromedriver_path = os.getcwd() + "/bin/chromedriver"
-
-driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=chromedriver_path)
-wait = WDW(driver, 5)
-
-
 def get_log_time(att_state: ATT_STATE) -> str:
-    if att_state == ATT_STATE.SIGN_IN :
-        return f"10:{random.randint(0,59):02} AM"
-    if att_state == ATT_STATE.SIGN_OUT :
-        return f"7:{random.randint(0,59):02} PM"
-    return f"9:{random.randint(0,59):02} PM"
+    if att_state == ATT_STATE.SIGN_IN:
+        return f"9:{random.randint(0, 59):02} AM"
+    if att_state == ATT_STATE.SIGN_OUT:
+        return f"7:{random.randint(0, 59):02} PM"
+    return f"9:{random.randint(0, 59):02} PM"
 
 
 def mark_attendance_for_all(att_state: ATT_STATE):
