@@ -12,6 +12,7 @@ class ATT_STATE(Enum):
     SIGN_IN = " Duty SignIn  "
     SIGN_OUT = " Duty SignOff "
     WORKPLACE = " Work Place "
+    WORK_FROM_HOME = " Work From Home "
 
 
 def get_log_time(att_state: ATT_STATE) -> str:
@@ -45,7 +46,7 @@ def mark_attendance(username: str, password: str, att_state: ATT_STATE, log_time
     logger.info("entering attendance details..")
     wait.until(EC.element_to_be_clickable((By.XPATH, XPath['attendance_submit'])))
     driver.find_element_by_xpath(XPath['attendance_state'] + f"/option[text()='{att_state.value}']").click()
-    driver.find_element_by_xpath(XPath['workplace'] + f"/option[text()='{ATT_STATE.WORKPLACE.value}']").click()
+    driver.find_element_by_xpath(XPath['workplace'] + f"/option[text()='{ATT_STATE.WORK_FROM_HOME.value}']").click()
     driver.execute_script('document.getElementsByName("LoginTime")[0].removeAttribute("disabled")')
     time = driver.find_element_by_xpath("//*[@id='LoginTime']")
     time.clear()
@@ -53,9 +54,14 @@ def mark_attendance(username: str, password: str, att_state: ATT_STATE, log_time
     wait.until(EC.element_to_be_clickable((By.XPATH, XPath['attendance_submit'])))
     logger.info(f"submitting attendance with log time : {time.get_attribute('value')}")
     driver.find_element_by_xpath(XPath['attendance_submit']).send_keys(Keys.RETURN)
-    logger.info("attendace marked successful..")
     driver.get("https://services.resolveindia.in/logout")
     logger.info("Log out successful..")
+    try:
+        mark_attendance(username, password, att_state, log_time)
+    except Exception as e:
+        driver.get("https://services.resolveindia.in/logout")
+        logger.info("Log out successful..")
+        logger.info("ATTENDANCE MARKED SUCCESSFUL..")
 
 
 def lambda_handler(event, context):
